@@ -15,38 +15,35 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       width: 100%;
     }
-    /* The mailbox container holds both the envelope and the letter.
-       Increased height and overflow visible so the full letter can be seen. */
+    /* Mailbox container fills the viewport */
     .mailbox {
       position: relative;
-      width: 250px;       /* matches the envelope width */
-      height: 600px;      /* taller to accommodate a longer letter */
-      overflow: visible;  /* allow the letter to extend beyond the box */
+      width: 350px;       /* Matches the envelope width */
+      height: 100vh;      /* Full viewport height */
+      overflow: visible;  /* Allow the letter to extend beyond the box */
     }
-    /* Envelope styling */
+    /* Envelope styling – centered vertically */
     .envelope {
       position: absolute;
-      top: 0;
+      top: calc(50% - 125px);  /* Envelope height is 250px; center = 125px */
       left: 50%;
       transform: translateX(-50%);
-      width: 250px;
-      height: 150px;
+      width: 350px;
+      height: 250px;
       background-color: red;
       display: flex;
       justify-content: center;
       align-items: center;
       color: white;
-      font-size: 30px;
-      /* Set the envelope text to a cursive font */
+      font-size: 40px;
       font-family: 'Brush Script MT', cursive;
       border-radius: 5px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       transition: transform 0.5s ease, opacity 0.5s ease;
-      z-index: 2; /* on top of the letter */
+      z-index: 2; /* On top of the letter */
     }
     .envelope:hover {
       transform: translateX(-50%) scale(1.05);
@@ -54,12 +51,12 @@
     .envelope::before {
       content: '';
       position: absolute;
-      top: -15px;
+      top: -30px;
       left: 0;
       right: 0;
-      height: 15px;
+      height: 30px;
       background-color: pink;
-      border-radius: 0 0 5px 5px;
+      border-radius: 0 0 10px 10px;
     }
     .stamp {
       position: absolute;
@@ -81,13 +78,15 @@
       color: red;
       line-height: 40px;
     }
-    /* Letter styling */
+    /* Letter styling – initially centered in the mailbox */
     .letter {
       position: absolute;
-      width: 300px; /* Slightly wider than the envelope */
+      width: 300px; /* Slightly narrower than the envelope */
       left: 50%;
       transform: translateX(-50%);
-      top: 150px; /* Positioned so its top edge is at the bottom of the envelope */
+      /* Center the letter vertically by placing its top at calc(50% - half its height)
+         Assuming a minimum height of 400px, half is 200px */
+      top: calc(50% - 200px);
       background-color: #fff;
       padding: 30px;
       text-align: center;
@@ -96,7 +95,12 @@
       opacity: 0;
       transition: top 0.5s ease, opacity 0.5s ease;
       z-index: 1;
-      min-height: 400px;  /* Increased height for a longer letter look */
+      min-height: 400px;
+    }
+    /* When the letter is "open," it slides upward by 50px */
+    .letter.open {
+      top: calc(50% - 250px);
+      opacity: 1;
     }
     /* Set the letter text to a cursive font */
     .letter p {
@@ -104,11 +108,6 @@
       color: #d6336c;
       margin-bottom: 20px;
       font-family: 'Brush Script MT', cursive;
-    }
-    /* When the letter is "open," it slides upward to reveal more of itself */
-    .letter.open {
-      top: 50px;  /* Moves upward so more of the letter is visible */
-      opacity: 1;
     }
     /* Button container and button styling */
     .buttons {
@@ -147,6 +146,10 @@
       color: #d6336c;
       font-family: 'Brush Script MT', cursive;
     }
+    /* Letter content container (text & buttons) */
+    #letter-content {
+      /* This container will be hidden on YES! click */
+    }
     /* Letter image container */
     #letter-image {
       display: none;
@@ -160,33 +163,48 @@
 <body>
   <div class="container">
     <div class="mailbox">
-      <!-- Envelope is positioned at the top of the mailbox -->
+      <!-- Envelope is centered in the mailbox -->
       <div class="envelope" onclick="openLetter()">
         For Lucas
         <div class="stamp">
           <span class="heart">&#10084;</span>
         </div>
       </div>
-      <!-- Letter is initially hidden behind the envelope -->
+      <!-- Letter (initially hidden) is centered in the mailbox -->
       <div class="letter" id="letter">
-        <!-- Content container -->
+        <!-- Content container (text and buttons) -->
         <div id="letter-content">
           <p>Will you be my valentine?</p>
           <div class="buttons" id="button-container">
             <button onclick="respond('yes')">YES!</button>
             <button id="no-btn" onclick="respond('no')">no</button>
           </div>
-          <div class="signature">Love, Emma &#10084;</div>
         </div>
+        <!-- Signature remains visible at all times -->
+        <div class="signature">Love, Emma &#10084;</div>
         <!-- Hidden image container -->
         <div id="letter-image">
-          <img src="images/lucas.gif" alt="Valentine Image" />
+          <img src="lucas.gif" alt="Valentine GIF" />
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // This function handles the YES action.
+    function handleYes() {
+      var letterContent = document.getElementById('letter-content');
+      var letterImage = document.getElementById('letter-image');
+      // Only proceed if the image isn't already shown.
+      if (letterImage.style.display !== 'block') {
+        letterContent.style.display = 'none';
+        letterImage.style.display = 'block';
+        setTimeout(function() {
+          alert('Yay! ❤️');
+        }, 100);
+      }
+    }
+
     function openLetter() {
       const envelope = document.querySelector('.envelope');
       const letter = document.getElementById('letter');
@@ -203,9 +221,7 @@
 
     function respond(answer) {
       if (answer === 'yes') {
-        // Hide the letter content and display the image.
-        document.getElementById('letter-content').style.display = 'none';
-        document.getElementById('letter-image').style.display = 'block';
+        handleYes();
       } else {
         spawnYesButtons(3); // Each "no" click spawns 3 YES buttons near "no"
       }
@@ -238,7 +254,8 @@
         yesButton.style.cursor = 'pointer';
         yesButton.style.zIndex = '10'; // Ensure these cover the no button if overlapping
         
-        yesButton.onclick = () => alert('Yay! ❤️');
+        // Clicking any YES button calls handleYes()
+        yesButton.onclick = handleYes;
         container.appendChild(yesButton);
       }
     }
