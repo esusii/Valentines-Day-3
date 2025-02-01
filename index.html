@@ -1,110 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Day</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #fef1f2;
-            font-family: 'Cursive', sans-serif;
-            margin: 0;
-        }
-        .envelope {
-            position: relative;
-            width: 250px;
-            height: 150px;
-            background-color: red;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 20px;
-            font-style: italic;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 0;
-            right: 0;
-            height: 15px;
-            background-color: pink;
-            border-radius: 0 0 5px 5px;
-        }
-        .stamp {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 40px;
-            height: 40px;
-            background-color: white;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            line-height: 40px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .letter {
-            display: none;
-            position: relative;
-            background-color: #fff;
-            padding: 30px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-        }
-        .letter p {
-            font-size: 24px;
-            color: #d6336c;
-            margin-bottom: 20px;
-        }
-        .buttons button {
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: transform 0.2s;
-        }
-        .buttons button:hover {
-            transform: scale(1.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valentine's Day</title>
+  <style>
+    /* Overall page styling */
+    body {
+      margin: 0;
+      background-color: #fef1f2;
+      font-family: 'Brush Script MT', cursive;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+    }
+    /* The mailbox container holds both the envelope and the letter.
+       Increased height and overflow visible so the full letter can be seen. */
+    .mailbox {
+      position: relative;
+      width: 250px;       /* matches the envelope width */
+      height: 600px;      /* taller to accommodate a longer letter */
+      overflow: visible;  /* allow the letter to extend beyond the box */
+    }
+    /* Envelope styling */
+    .envelope {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      height: 150px;
+      background-color: red;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 30px;
+      /* Set the envelope text to a cursive font */
+      font-family: 'Brush Script MT', cursive;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      z-index: 2; /* on top of the letter */
+    }
+    .envelope:hover {
+      transform: translateX(-50%) scale(1.05);
+    }
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 0;
+      right: 0;
+      height: 15px;
+      background-color: pink;
+      border-radius: 0 0 5px 5px;
+    }
+    .stamp {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 40px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    /* Little red heart inside the stamp */
+    .stamp .heart {
+      font-size: 20px;
+      color: red;
+      line-height: 40px;
+    }
+    /* Letter styling */
+    .letter {
+      position: absolute;
+      width: 300px; /* Slightly wider than the envelope */
+      left: 50%;
+      transform: translateX(-50%);
+      top: 150px; /* Positioned so its top edge is at the bottom of the envelope */
+      background-color: #fff;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: top 0.5s ease, opacity 0.5s ease;
+      z-index: 1;
+      min-height: 400px;  /* Increased height for a longer letter look */
+    }
+    /* Set the letter text to a cursive font */
+    .letter p {
+      font-size: 45px;
+      color: #d6336c;
+      margin-bottom: 20px;
+      font-family: 'Brush Script MT', cursive;
+    }
+    /* When the letter is "open," it slides upward to reveal more of itself */
+    .letter.open {
+      top: 50px;  /* Moves upward so more of the letter is visible */
+      opacity: 1;
+    }
+    /* Button container and button styling */
+    .buttons {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .buttons button {
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s;
+      position: relative;
+    }
+    .buttons button:hover {
+      transform: scale(1.1);
+    }
+    /* The no button starts with a lower z-index */
+    #no-btn {
+      z-index: 1;
+      position: relative;
+    }
+    /* Signature styling at the bottom right of the letter */
+    .signature {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      font-size: 24px;
+      color: #d6336c;
+      font-family: 'Brush Script MT', cursive;
+    }
+    /* Letter image container */
+    #letter-image {
+      display: none;
+    }
+    #letter-image img {
+      width: 100%;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="envelope" onclick="openLetter()">
-        For You
-        <div class="stamp">2025</div>
-    </div>
-    <div class="letter" id="letter">
-        <p>Will you be my valentine?</p>
-        <div class="buttons">
-            <button onclick="respond('yes')">YES!</button>
-            <button onclick="respond('no')">no</button>
+  <div class="container">
+    <div class="mailbox">
+      <!-- Envelope is positioned at the top of the mailbox -->
+      <div class="envelope" onclick="openLetter()">
+        For Lucas
+        <div class="stamp">
+          <span class="heart">&#10084;</span>
         </div>
+      </div>
+      <!-- Letter is initially hidden behind the envelope -->
+      <div class="letter" id="letter">
+        <!-- Content container -->
+        <div id="letter-content">
+          <p>Will you be my valentine?</p>
+          <div class="buttons" id="button-container">
+            <button onclick="respond('yes')">YES!</button>
+            <button id="no-btn" onclick="respond('no')">no</button>
+          </div>
+          <div class="signature">Love, Emma &#10084;</div>
+        </div>
+        <!-- Hidden image container -->
+        <div id="letter-image">
+          <img src="images/lucas.gif" alt="Valentine Image" />
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        function openLetter() {
-            document.querySelector('.envelope').style.display = 'none';
-            document.getElementById('letter').style.display = 'block';
-        }
-        function respond(answer) {
-            alert(answer === 'yes' ? 'Yay! ❤️' : 'Oh no! 😢');
-        }
-    </script>
+  <script>
+    function openLetter() {
+      const envelope = document.querySelector('.envelope');
+      const letter = document.getElementById('letter');
+      
+      // Start the letter "slide out" animation by adding the "open" class.
+      letter.classList.add('open');
+      
+      // Fade out the envelope to reveal the letter.
+      envelope.style.opacity = '0';
+      setTimeout(() => {
+        envelope.style.display = 'none';
+      }, 500);
+    }
+
+    function respond(answer) {
+      if (answer === 'yes') {
+        // Hide the letter content and display the image.
+        document.getElementById('letter-content').style.display = 'none';
+        document.getElementById('letter-image').style.display = 'block';
+      } else {
+        spawnYesButtons(3); // Each "no" click spawns 3 YES buttons near "no"
+      }
+    }
+
+    function spawnYesButtons(count) {
+      const noButton = document.getElementById('no-btn');
+      const container = document.getElementById('button-container');
+      
+      // Get the no button's position relative to its container
+      const noX = noButton.offsetLeft;
+      const noY = noButton.offsetTop;
+      
+      for (let i = 0; i < count; i++) {
+        let yesButton = document.createElement('button');
+        yesButton.innerText = 'YES!';
+        yesButton.style.position = 'absolute';
+        
+        // New random offset range: [-60, 60] pixels from the no button's position.
+        let offsetX = noX + (Math.random() * 120 - 60);
+        let offsetY = noY + (Math.random() * 120 - 60);
+        yesButton.style.left = offsetX + 'px';
+        yesButton.style.top = offsetY + 'px';
+        
+        yesButton.style.backgroundColor = 'red';
+        yesButton.style.color = 'white';
+        yesButton.style.border = 'none';
+        yesButton.style.borderRadius = '5px';
+        yesButton.style.padding = '10px 20px';
+        yesButton.style.cursor = 'pointer';
+        yesButton.style.zIndex = '10'; // Ensure these cover the no button if overlapping
+        
+        yesButton.onclick = () => alert('Yay! ❤️');
+        container.appendChild(yesButton);
+      }
+    }
+  </script>
 </body>
 </html>
