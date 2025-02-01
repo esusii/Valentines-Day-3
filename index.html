@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fef1f2;
+            font-family: 'Cursive', sans-serif;
+            margin: 0;
+        }
+        .envelope {
+            position: relative;
+            width: 250px;
+            height: 150px;
+            background-color: red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            font-style: italic;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background-color: pink;
+            border-radius: 0 0 5px 5px;
+        }
+        .stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 40px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .letter {
+            display: none;
+            position: relative;
+            background-color: #fff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .letter p {
+            font-size: 24px;
+            color: #d6336c;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        .buttons button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope" onclick="openLetter()">
+        For You
+        <div class="stamp">2025</div>
+    </div>
+    <div class="letter" id="letter">
+        <p>Will you be my valentine?</p>
+        <div class="buttons">
+            <button onclick="respond('yes')">YES!</button>
+            <button onclick="respond('no')">no</button>
+        </div>
+    </div>
+
+    <script>
+        function openLetter() {
+            document.querySelector('.envelope').style.display = 'none';
+            document.getElementById('letter').style.display = 'block';
+        }
+        function respond(answer) {
+            alert(answer === 'yes' ? 'Yay! ❤️' : 'Oh no! 😢');
+        }
+    </script>
+</body>
+</html>
